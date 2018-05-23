@@ -24,6 +24,8 @@ class DataLoader:
         :param path: str -> The root directory where images are searched.
         :param has_ground_truth: bool -> If True, every image requires a corresponding label file.
         """
+        assert os.path.isdir(path)
+
         self.__n = 0
         self.has_ground_truth = has_ground_truth
         self.images = [os.path.join(path, file) for file in os.listdir(path) if is_filetype(file, ".jpg")]
@@ -34,8 +36,11 @@ class DataLoader:
                 img_name = os.path.basename(image)
                 lbl_name = "%s.txt" % string.join(img_name.split(".")[:-1])
                 lbl_path = os.path.join(os.path.dirname(image), lbl_name)
+
                 if not os.path.exists(lbl_path):
                     raise ValueError("Could not find the label file %s" % lbl_path)
+
+                # TODO: we might want to make this double loop simpler
                 label = []
                 with open(lbl_path, "r") as fid:
                     for line in fid.readlines():
