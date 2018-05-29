@@ -1,0 +1,7 @@
+<launch>
+    <node name="cnn_analytics" pkg="cnn_lanefollowing" type="analyze_output_node.py" required="true">
+        <rosparam param="trained_networks">["/home/dominik/workspace/duckie_cnn/cpu.pth", "/home/dominik/workspace/duckie_cnn/cpu.ckpt"]</rosparam>
+        <param name="data_dir" value="/home/dominik/workspace/duckietown_imitation_learning/train_images"/>
+        <param name="out_file" value="/home/dominik/workspace/duckie_cnn/out.txt"/>
+    </node>
+</launch>
