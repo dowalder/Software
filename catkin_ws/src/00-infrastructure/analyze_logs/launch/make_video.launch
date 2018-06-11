@@ -1,0 +1,12 @@
+<launch>
+  <node pkg="analyze_logs" type="draw_steering_arrow.py" name="draw_steering_arrow"
+        args="
+        -s /tmp/duckietown-download/20160119-duckietown4_1car_LC1_blinking_joystick_1.qa0.bag \
+        -t /home/dominik/dataspace/videos \
+        --control_topic /ferrari/wheels_driver/wheels_cmd \
+        --img_topic /ferrari/camera_node/image/compressed \
+        --fps 30 \
+        --video"
+        output="screen"
+  />
+</launch>
