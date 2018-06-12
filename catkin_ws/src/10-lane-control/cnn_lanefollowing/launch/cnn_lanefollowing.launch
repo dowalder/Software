@@ -1,0 +1,24 @@
+<launch>
+    <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+    <arg name="local" default="false"
+         doc="true for running everything you possibly can on laptop. false for everything running on vehicle."/>
+    <arg name="checkpoint_path" default="/home/dominik/workspace/duckie_cnn/cpu.pth"/>
+
+    <include file="$(find duckietown)/machines"/>
+
+    <group ns="$(arg veh)">
+
+        <!-- run local -->
+        <node if="$(arg local)" pkg="cnn_lanefollowing" type="lane_controller_node.py" name="cnn_lanefollowing"
+              output="screen" clear_params="true" required="true">
+            <param name="checkpoint_path" value="$(arg checkpoint_path)"/>
+        </node>
+
+        <!-- run remote -->
+        <node unless="$(arg local)" machine="$(arg veh)" pkg="cnn_lanefollowing" type="lane_controller_node.py"
+              name="cnn_lanefollowing" output="screen" clear_params="true" required="true">
+            <param name="checkpoint_path" value="$(arg checkpoint_path)"/>
+        </node>
+    </group>
+</launch>
+
