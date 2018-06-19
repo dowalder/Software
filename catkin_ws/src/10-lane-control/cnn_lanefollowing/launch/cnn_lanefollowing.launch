@@ -2,7 +2,7 @@
     <arg name="veh" doc="Name of vehicle. ex: megaman"/>
     <arg name="local" default="false"
          doc="true for running everything you possibly can on laptop. false for everything running on vehicle."/>
-    <arg name="checkpoint_path" default="/home/dominik/workspace/duckie_cnn/cpu.pth"/>
+    <arg name="checkpoint_path" default="/home/dominik/dataspace/models/direct_caffe_copy/checkpoint_9000.pth"/>
 
     <include file="$(find duckietown)/machines"/>
 

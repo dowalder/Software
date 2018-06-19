@@ -17,7 +17,8 @@ def run_basic_training():
     net, train_loader, test_loader, criterion, optimizer = cnn_lanefollowing.train.exact_caffe_copy_factory(
         train_dir, test_dir)
 
-    cnn_lanefollowing.train.train_net(net, train_loader, test_loader, criterion, optimizer, model_dir, device="cuda:0", save_interval=1000)
+    cnn_lanefollowing.train.train_net(net, train_loader, test_loader, criterion, optimizer, model_dir, device="cuda:0",
+                                      save_interval=1000, num_epoch=400)
 
 
 def main():

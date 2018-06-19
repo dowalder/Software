@@ -14,7 +14,7 @@ import cnn_lanefollowing.networks
 use_caffe = False
 if use_caffe:
     MODEL_DEF = '/home/dominik/workspace/duckietown_imitation_learning/deploy.prototxt'
-    MODEL_WEIGHT = '/home/dominik/workspace/duckietown_imitation_learning/duckie_model_iter_10000.caffemodel'
+    MODEL_WEIGHT = '/home/dominik/workspace/duckietown_imitation_learning/duckie_model_iter_10000_original.caffemodel'
     import caffe
 
     class CNNController:
@@ -26,7 +26,7 @@ if use_caffe:
 
             self.pub = rospy.Publisher("~car_cmd", duckietown_msgs.msg.Twist2DStamped)
 
-            rospy.Subscriber("~compressed", sensor_msgs.msg.CompressedImage, self.receive_img)
+            rospy.Subscriber("~compressed", sensor_msgs.msg.CompressedImage, self.receive_img, queue_size=1)
 
         def receive_img(self, img_msg):
             rospy.loginfo("received img")
@@ -47,7 +47,7 @@ if use_caffe:
             car_control_msg.v = 0.386400014162
             car_control_msg.omega = out["out"][0][0]
 
-            rospy.loginfo("publishing cmd: %f" % out["out"][0][0])
+            rospy.loginfo("publishing cmd1: %f" % out["out"][0][0])
 
             self.pub.publish(car_control_msg)
 
@@ -61,7 +61,7 @@ else:
 
             self.pub = rospy.Publisher("~car_cmd", duckietown_msgs.msg.Twist2DStamped)
 
-            rospy.Subscriber("~compressed", sensor_msgs.msg.CompressedImage, self.receive_img)
+            rospy.Subscriber("~compressed", sensor_msgs.msg.CompressedImage, self.receive_img, queue_size=1)
 
         def receive_img(self, img_msg):
             rospy.loginfo("received img")
@@ -80,7 +80,7 @@ else:
             car_control_msg = duckietown_msgs.msg.Twist2DStamped()
             car_control_msg.header = img_msg.header
             car_control_msg.v = 0.386400014162
-            car_control_msg.omega = out[0]
+            car_control_msg.omega = out[0] * 0.5
 
             rospy.loginfo("publishing cmd: %f" % out[0])
 
@@ -90,7 +90,11 @@ else:
 def main():
     rospy.init_node("cnn_lanecontrol")
 
-    controller = CNNController(rospy.get_param("~checkpoint_path"))
+    pth = rospy.get_param("~checkpoint_path")
+
+    rospy.loginfo("model path: {}".format(pth))
+
+    controller = CNNController(pth)
 
     rospy.spin()
 

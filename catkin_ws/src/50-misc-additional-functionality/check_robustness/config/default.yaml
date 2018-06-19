@@ -1,9 +1,15 @@
+### CHOOSE TRANSFORMATIONS
+transforms:
+  - "random_rotation"
+  - "discrete_translation"
+
+### PARAMETERS FOR INDIVIDUAL TRANSFORMATIONS
 # Fixed Translation
 fixed_translation_hor_ratio: 0.2
 fixed_translation_ver_ratio: 0.2
 # Random Translation
-fixed_translation_hor_bound: [0.1, 0.3]
-fixed_translation_ver_bound: [0.1, 0.3]
+random_translation_hor_bound: [0.1, 0.3]
+random_translation_ver_bound: [0.1, 0.3]
 # Discrete Translation
 discrete_translation_param_sets:
   - [0.2, 0.2]
@@ -13,7 +19,7 @@ discrete_translation_param_sets:
 # Fixed Rotation
 fixed_rotation_angle: 25
 # Random Rotation
-random_rotation_lower: -45
-random_rotation_upper: 45
+random_rotation_lower: -30
+random_rotation_upper: 30
 # Discrete Random
 discrete_rotation_angles: [-40. -20, 20, 40]

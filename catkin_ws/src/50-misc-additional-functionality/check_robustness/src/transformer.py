@@ -2,53 +2,42 @@
 import rospy
 import cv_bridge
 import sensor_msgs.msg
-import enum
 
 import check_robustness.transforms
 
 
-class Transformation(enum.Enum):
-    FIXED_TRANSLATION = 1
-    RANDOM_TRANSLATION = 2
-    DISCRETE_TRANSLATION = 3
-    FIXED_ROTATION = 4
-    RANDOM_ROTATION = 5
-    DISCRETE_ROTATION = 6
-
-
 def transformation_factory(transformation):
-    assert isinstance(transformation, Transformation)
+    assert isinstance(transformation, str)
 
-    if transformation == Transformation.FIXED_TRANSLATION:
+    if transformation == "fixed_translation":
         hor_ratio = rospy.get_param("~fixed_translation_hor_ratio")
         ver_ratio = rospy.get_param("~fixed_translatuion_ver_ratio")
         return check_robustness.transforms.FixedTranslation(horizontal_percentage=hor_ratio,
                                                             vertical_percentage=ver_ratio)
-    elif transformation == Transformation.RANDOM_TRANSLATION:
+    elif transformation == "random_translation":
         hor_bound = rospy.get_param("~fixed_translation_hor_bound")
         ver_bound = rospy.get_param("~fixed_translation_ver_bound")
         return check_robustness.transforms.RandomTranslation(horizontal_bound=hor_bound, vertical_bound=ver_bound)
 
-    elif transformation == Transformation.DISCRETE_TRANSLATION:
+    elif transformation == "discrete_translation":
         param_sets = rospy.get_param("~discrete_translation_param_sets")
         return check_robustness.transforms.DiscreteTranslation(param_sets=param_sets)
 
-    elif transformation == Transformation.FIXED_ROTATION:
+    elif transformation == "fixed_rotation":
         angle = rospy.get_param("~fixed_rotation_angle")
         return check_robustness.transforms.FixedRotation(angle)
 
-    elif transformation == Transformation.RANDOM_ROTATION:
+    elif transformation == "random_rotation":
         lower = rospy.get_param("~random_rotation_lower")
         upper = rospy.get_param("~random_rotation_upper")
         return check_robustness.transforms.RandomRotation(lower=lower, upper=upper)
 
-    elif transformation == Transformation.DISCRETE_ROTATION:
+    elif transformation == "discrete_rotation":
         angle_sets = rospy.get_param("~discrete_rotation_angles")
         return check_robustness.transforms.DiscreteRotation(angle_set=angle_sets)
 
     else:
         raise RuntimeError("Unknown transformation: {}".format(transformation))
-
 
 
 class Transformer:
@@ -89,7 +78,10 @@ class Transformer:
 def main():
     rospy.init_node("transformer")
 
-    transformer = Transformer(transforms=[check_robustness.transforms.Translation(0.2, 0.2)])
+    transforms = rospy.get_param("~transforms")
+    transforms = [transformation_factory(transform) for transform in transforms]
+
+    transformer = Transformer(transforms=transforms)
 
     rospy.spin()
 

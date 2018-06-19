@@ -12,6 +12,7 @@ def main():
     net_paths = rospy.get_param("~trained_networks")
     nets = []
     for path in net_paths:
+        rospy.loginfo("Loading network: {}".format(path))
         net = cnn_lanefollowing.networks.NImagesNet(n=1)
         net.load_state_dict(torch.load(path))
         nets.append(net)
@@ -20,11 +21,16 @@ def main():
     data_set = cnn_lanefollowing.dataset.DataSet(data_dir)
     data_loader = torch.utils.data.DataLoader(data_set)
 
+    rospy.loginfo("Found {} images in {}.".format(len(data_loader), data_dir))
+
     tgt_file = rospy.get_param("~out_file")
 
     out = []
 
-    for lbl, img in data_loader:
+    for i, (lbl, img) in enumerate(data_loader):
+        if rospy.is_shutdown():
+            raise RuntimeError("ROS is shutdown.")
+        print "{}/{}".format(i, len(data_loader))
         current = [float(lbl[0])]
         for net in nets:
             current.append(float(net(img)[0]))
