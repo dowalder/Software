@@ -54,12 +54,15 @@ if use_caffe:
 else:
     class CNNController:
 
-        def __init__(self, path):
+        def __init__(self, path, device="cpu"):
             self.cnn = cnn_lanefollowing.networks.NImagesNet(n=1)
             self.cnn.load_state_dict(torch.load(path))
             self.cvbridge = cv_bridge.CvBridge()
 
             self.pub = rospy.Publisher("~car_cmd", duckietown_msgs.msg.Twist2DStamped)
+
+            self.device = torch.device(device)
+            self.cnn.to(self.device)
 
             rospy.Subscriber("~compressed", sensor_msgs.msg.CompressedImage, self.receive_img, queue_size=1)
 
@@ -74,15 +77,17 @@ else:
             img = cv2.normalize(img.astype('float'), None, 0.0, 1.0, cv2.NORM_MINMAX)
             img = img[None, None, :, :]
             img = torch.Tensor(img)
+            img = img.to(self.device)
 
             out = self.cnn(img)
 
             car_control_msg = duckietown_msgs.msg.Twist2DStamped()
             car_control_msg.header = img_msg.header
             car_control_msg.v = 0.386400014162
-            car_control_msg.omega = out[0] * 0.5
+            car_control_msg.omega = out[0]
 
             rospy.loginfo("publishing cmd: %f" % out[0])
+            print (img_msg.header.stamp - rospy.Time.now())
 
             self.pub.publish(car_control_msg)
 
@@ -94,7 +99,7 @@ def main():
 
     rospy.loginfo("model path: {}".format(pth))
 
-    controller = CNNController(pth)
+    controller = CNNController(pth, "cuda:0")
 
     rospy.spin()
 
