@@ -1,0 +1,23 @@
+<launch>
+    <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+    <arg name="local" default="false"
+         doc="true for running everything you possibly can on laptop. false for everything running on vehicle."/>
+
+    <include file="$(find duckietown)/machines"/>
+
+    <group ns="$(arg veh)">
+
+        <!-- run local -->
+        <node if="$(arg local)" pkg="check_robustness" type="transformer.py" name="image_transformer"
+              output="screen" clear_params="true" required="true">
+            <rosparam command="load" file="$(find check_robustness)/config/default.yaml"/>
+        </node>
+
+        <!-- run remote -->
+        <node unless="$(arg local)" machine="$(arg veh)"  pkg="check_robustness" type="transformer.py"
+              name="image_transformer" output="screen" clear_params="true" required="true">
+            <rosparam command="load" file="$(find check_robustness)/config/default.yaml"/>
+        </node>
+    </group>
+</launch>
+
