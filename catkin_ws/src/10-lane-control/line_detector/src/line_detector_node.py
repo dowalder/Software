@@ -187,7 +187,11 @@ class LineDetectorNode(object):
         tk.completed('resized')
 
         # apply color correction
-        image_cv_corr = self.ai.applyTransform(image_cv)
+         # TODO: attention, some hacking happened here
+        if False:
+            image_cv_corr = self.ai.applyTransform(image_cv)
+        else:
+            image_cv_corr = image_cv
         # image_cv_corr = cv2.convertScaleAbs(image_cv_corr)
 
         tk.completed('corrected')

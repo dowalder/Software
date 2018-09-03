@@ -3,6 +3,7 @@ import imp
 import time
 
 import torch
+import numpy as np
 
 import rospy
 import zmq
@@ -95,6 +96,8 @@ import cnn_lanefollowing.networks
 #
 #             self.pub.publish(car_control_msg)
 # else:
+
+
 class Python3Connector(object):
     def __init__(self):
         pub_topic = "ipc:///home/dominik/tmp/image.zeromq"
