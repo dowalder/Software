@@ -126,13 +126,14 @@
 <!-- Enable statistics -->
 <param name="enable_statistics" value="$(arg statistics)"/>
 
-<group if="$(arg neural_style)">
-	<remap from="neural_style/uncorrected_image" to="camera_node/image/compressed" />
-	<include file="$(find cnn_lanefollowing)/launch/neural_style.launch">
-		<arg name="veh" value="$(arg veh)"/>
-        <arg name="local" value="$(arg local)"/>
-	</include>
-</group>
+<remap from="neural_style/uncorrected_image" to="camera_node/image/compressed" />
+<!--<group if="$(arg neural_style)">-->
+	<!---->
+	<!--<include file="$(find cnn_lanefollowing)/launch/neural_style.launch">-->
+		<!--<arg name="veh" value="$(arg veh)"/>-->
+        <!--<arg name="local" value="$(arg local)"/>-->
+	<!--</include>-->
+<!--</group>-->
 
 <!-- Start Camera -->
 <group if="$(arg camera)">
