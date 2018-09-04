@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
 	<!-- start basic args -->
-	<arg name="veh" default="$(env VEHICLE_NAME)"/>
+	<arg name="veh" default="this_is_only_a_default"/>
 	<arg name="config" default="baseline" />
 	<arg name="param_file_name" default="default" />
 	<arg name="apriltags_param_file_name" default="$(arg param_file_name)" />
@@ -14,6 +14,7 @@
 	<arg name="loc" default="-1"/>
 	<arg name="line_detector_param_file_name" default="$(arg param_file_name)"/>
 	<arg name="intersectionType" default= "stopSign"/>
+	<arg name="local" default="true"/>
 	<!-- end basic args -->
 
 	<!-- the things that are "on" by default:
@@ -127,7 +128,7 @@
 
 <group if="$(arg neural_style)">
 	<remap from="neural_style/uncorrected_image" to="camera_node/image/compressed" />
-	<include file="$(find cnn_lanefollowing)/launch/anti_instagram_node.launch">
+	<include file="$(find cnn_lanefollowing)/launch/neural_style.launch">
 		<arg name="veh" value="$(arg veh)"/>
         <arg name="local" value="$(arg local)"/>
 	</include>

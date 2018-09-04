@@ -42,7 +42,6 @@ def main():
     connector = Python3Connector()
 
     rospy.spin()
-    "catkin_ws/src/05-teleop/pi_camera/src/camera_node_sequence.py"
 
 
 if __name__ == "__main__":

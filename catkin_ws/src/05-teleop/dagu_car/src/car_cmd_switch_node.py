@@ -26,7 +26,7 @@ class CarCmdSwitchNode(object):
         if True:
             self.current_src_name = "vehicle"
             return
-        
+
         self.current_src_name = self.mappings.get(fsm_state_msg.state)
         if self.current_src_name == "stop":
             self.pubStop()
