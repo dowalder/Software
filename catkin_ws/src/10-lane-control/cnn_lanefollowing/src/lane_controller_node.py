@@ -123,7 +123,7 @@ class Python3Connector(object):
 
         car_control_msg = duckietown_msgs.msg.Twist2DStamped()
         car_control_msg.header = img_msg.header
-        car_control_msg.v = -0.2
+        car_control_msg.v = 0.2
         car_control_msg.omega = -cmd   # TODO: CHANGE BACK
         self.pub_ros.publish(car_control_msg)
 

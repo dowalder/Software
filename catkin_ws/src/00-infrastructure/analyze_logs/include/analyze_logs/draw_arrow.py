@@ -1,11 +1,11 @@
-import rosbag
 import cv2
 import numpy as np
 import cv_bridge
-import collections
-
 
 # General parametrization of a control signal for a car.
+from analyze_logs.bag_handling import extract_messages
+
+
 class ControlInput:
     def __init__(self, speed=0.0, steering=0.0):
         self.speed = speed
@@ -13,38 +13,6 @@ class ControlInput:
 
 
 # A collection of ros messages coming from a single topic.
-MessageCollection = collections.namedtuple("MessageCollection", ["topic", "type", "messages"])
-
-
-def extract_messages(path, requested_topics):
-    """
-    Sorts the content of the bag after types.
-
-    :param path: str -> path to rosbag
-    :param requested_topics: List[str] -> topics for which the messages should be extraced
-    :return:
-    """
-    assert isinstance(path, str)
-    assert isinstance(requested_topics, list)
-
-    bag = rosbag.Bag(path)
-
-    _, available_topics = bag.get_type_and_topic_info()
-
-    extracted_messages = {}
-    for topic in requested_topics:
-        if topic not in available_topics:
-            raise ValueError("Could not find the requested topic (%s) in the bag %s" % (topic, path))
-        extracted_messages[topic] = MessageCollection(topic=topic, type=available_topics[topic].msg_type, messages=[])
-
-    for msg in bag.read_messages():
-        topic = msg.topic
-        if topic not in requested_topics:
-            continue
-        extracted_messages[topic].messages.append(msg)
-    bag.close()
-
-    return extracted_messages
 
 
 def assign_nearest_points(references, points, comp=lambda x, y: x <= y, diff=lambda x, y: x - y):
@@ -148,8 +116,8 @@ def img_generator(bag_file, img_topic, control_topic, verbose=False):
 
     control_msgs = sorted_bag[control_topic]
     img_msgs = sorted_bag[img_topic]
-    # rospy.loginfo("Found %d messages on the topic %s and %d messages on the topic %s." %
-    #               (len(control_msgs.messages), control_topic, len(img_msgs.messages), img_topic))
+    rospy.loginfo("Found %d messages on the topic %s and %d messages on the topic %s." %
+                  (len(control_msgs.messages), control_topic, len(img_msgs.messages), img_topic))
 
     def _subtract_message_tstamps(msg1, msg2):
         """
@@ -175,7 +143,7 @@ def img_generator(bag_file, img_topic, control_topic, verbose=False):
                                        correspondences=correspondences,
                                        compute_average=select_control_averager(control_msgs.type))
 
-    # rospy.loginfo("Serving the images...")
+    rospy.loginfo("Serving the images...")
     bridge = cv_bridge.CvBridge()
     for i, img_msg in enumerate(img_msgs.messages):
         if img_msgs.type == "sensor_msgs/CompressedImage":

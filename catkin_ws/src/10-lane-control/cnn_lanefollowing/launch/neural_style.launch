@@ -6,7 +6,7 @@
     <include file="$(find duckietown)/machines"/>
 
     <group ns="$(arg veh)">
-
+        <remap from="neural_style/uncorrected" to="camera_node/image/compressed"/>
         <!-- run local -->
         <node if="$(arg local)" pkg="cnn_lanefollowing" type="neural_style_node.py" name="neural_style"
               output="screen" clear_params="true" required="true">
