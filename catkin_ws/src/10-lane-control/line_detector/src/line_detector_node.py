@@ -188,7 +188,7 @@ class LineDetectorNode(object):
 
         # apply color correction
          # TODO: attention, some hacking happened here
-        if False:
+        if True:
             image_cv_corr = self.ai.applyTransform(image_cv)
         else:
             image_cv_corr = image_cv

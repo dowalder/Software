@@ -7,18 +7,21 @@ import os
 
 import analyze_logs
 
+import cv_bridge
 import rospy
 import cv2
 
-IMG_ORIG_TOPIC = "/megabot07/camera_node/image/compressed"
-IMG_CORRECTED_TOPIC = "/megabot02/neural_style/corrected"
-MODE_TOPIC = "/megabot02/fsm_node/mode"
+IMG_ORIG_TOPIC = "/megabot06/camera_node/image/compressed"
+IMG_CORRECTED_TOPIC = "/megabot06/neural_style/corrected"
+MODE_TOPIC = "/megabot06/fsm_node/mode"
+CMD_TOPIC = "/megabot06/car_cmd_switch_node/cmd"
 
 
-def extract_run(src_file, tgt_dir, img_topic, video=False, fps=30):
+def extract_run(src_file, tgt_dir, img_topic, video=False, fps=30, store_cmd=False):
     msgs = analyze_logs.extract_messages(src_file, [img_topic, MODE_TOPIC])
     runs = analyze_logs.create_runs(msgs, img_topic, MODE_TOPIC)
 
+    bridge = cv_bridge.CvBridge()
     for idx, run in enumerate(runs):
 
         if video:
@@ -28,7 +31,7 @@ def extract_run(src_file, tgt_dir, img_topic, video=False, fps=30):
             out = cv2.VideoWriter(path, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), int(fps), img_size)
 
             for img in run:
-                img = cv2.resize(src=img, dsize=img_size)
+                img = cv2.resize(src=bridge.compressed_imgmsg_to_cv2(img.message), dsize=img_size)
                 if img.ndim < 3 or img.shape[2] == 1:
                     img = cv2.cvtColor(src=img, code=cv2.COLOR_GRAY2BGR)
                 out.write(img)
@@ -37,8 +40,12 @@ def extract_run(src_file, tgt_dir, img_topic, video=False, fps=30):
             rospy.loginfo("Writing images to %s" % tgt_dir)
             for i, img in enumerate(run):
                 path = os.path.join(tgt_dir, "run%05d_img%05d.jpg" % (idx, i))
-                if not cv2.imwrite(path, img):
+                path_stamp = os.path.join(tgt_dir, "run%05d_img%05d.txt" % (idx, i))
+                if not cv2.imwrite(path, bridge.compressed_imgmsg_to_cv2(img.message)):
                     rospy.logerr("Could not write the image %s" % path)
+                else:
+                    with open(path_stamp, "w") as fid:
+                        fid.write(str(img.timestamp))
 
 
 def process_bag(src_file, tgt_dir, video=False, fps=30):

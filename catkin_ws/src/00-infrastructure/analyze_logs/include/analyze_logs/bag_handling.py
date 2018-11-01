@@ -86,10 +86,10 @@ def create_runs(msg_collections, img_topic, mode_topic):
     for img in imgs.messages:
         if time_line.which_state(img.timestamp.to_sec()):
             if on:
-                runs[-1].append(cvbridge.compressed_imgmsg_to_cv2(img.message))
+                runs[-1].append(img)
             else:
                 on = True
-                runs.append([cvbridge.compressed_imgmsg_to_cv2(img.message)])
+                runs.append([img])
         else:
             if on:
                 on = False
