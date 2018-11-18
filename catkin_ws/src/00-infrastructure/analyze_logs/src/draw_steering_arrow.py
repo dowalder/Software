@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Creates a set of images or a video with a drawn steering arrow on top of them from a rosbag.
+"""
+
 from __future__ import print_function, division
 
 import argparse

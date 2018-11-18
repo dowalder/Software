@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+"""
+Extract runs from rosbag log from duckiebot. This script only extracts images during time intervals where the duckiebot
+was in autonomous mode. Additionally, it stores the timestamps of the images.
+"""
+
 from __future__ import print_function, division
 
 import argparse

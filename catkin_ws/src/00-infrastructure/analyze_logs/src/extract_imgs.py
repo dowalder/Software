@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Extract images from rosbag log from duckiebot
+"""
+
 from __future__ import print_function, division
 
 import argparse

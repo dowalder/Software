@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Extract commands from a rosbag log from the duckiebot.
+"""
+
 import os
 
 import analyze_logs

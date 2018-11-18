@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+"""
+Communicate with another script over zeromq. Allows to do computation in something else than python2.7, which is
+usually enforced by ROS.
+"""
+
 import time
 import signal
 
